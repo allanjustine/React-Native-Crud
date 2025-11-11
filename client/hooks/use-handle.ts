@@ -18,9 +18,12 @@ export default function useHandle<Args extends any[] = any, TResponse = any>(
       return response;
     } catch (error: any) {
       console.error(error);
-      setError(error.response.data.message || "Something went wrong");
-      if (error.response.status === 422) {
-        setErrors(error.response.data.errors);
+      if (error?.response?.status === 422) {
+        setErrors(error?.response?.data?.errors);
+        setError(null);
+      } else {
+        setError(error?.response?.data?.message || "Something went wrong");
+        setErrors(null);
       }
     } finally {
       setLoading(false);

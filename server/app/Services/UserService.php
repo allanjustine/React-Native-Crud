@@ -7,9 +7,24 @@ use Illuminate\Support\Str;
 
 class UserService
 {
-    public function getAllUser()
+    public function getAllUser(string $search = '')
     {
-        $users = User::query()->latest()->get();
+        $users = User::query()
+            ->when(
+                $search,
+                fn($query)
+                =>
+                $query->where(
+                    fn($user)
+                    =>
+                    $user->whereAny([
+                        'name',
+                        'email'
+                    ], 'like', "%{$search}%")
+                )
+            )
+            ->latest()
+            ->get();
 
         return $users;
     }

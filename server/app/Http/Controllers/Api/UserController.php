@@ -19,7 +19,9 @@ class UserController extends Controller
 
     public function index()
     {
-        $users =  $this->userService->getAllUser();
+        $search = request('search', '');
+
+        $users =  $this->userService->getAllUser($search);
 
         return response()->json([
             'message'       => 'All user fetched successfully',

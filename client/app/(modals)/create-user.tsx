@@ -11,7 +11,7 @@ import { useState } from "react";
 import { USER_FORM_INPUT } from "@/constants/form-input";
 import { UserFormInputType } from "@/types/form-input-type";
 import { storeUser } from "@/services/user-service";
-import useHandle from "@/hooks/useHandle";
+import useHandle from "@/hooks/use-handle";
 import { router } from "expo-router";
 import { ThemedText } from "@/components/themed-text";
 
@@ -53,7 +53,7 @@ export default function CreateUser() {
               },
             ]}
             inputMode="text"
-            defaultValue={formInput.name}
+            value={formInput.name}
             placeholder="Enter name"
             onChangeText={handleOnChange("name")}
             placeholderTextColor={isDarkMode ? "white" : "black"}
@@ -71,7 +71,7 @@ export default function CreateUser() {
               },
             ]}
             inputMode="email"
-            defaultValue={formInput.email}
+            value={formInput.email}
             placeholder="Enter email"
             onChangeText={handleOnChange("email")}
             placeholderTextColor={isDarkMode ? "white" : "black"}
@@ -92,7 +92,7 @@ export default function CreateUser() {
             ]}
             inputMode="text"
             secureTextEntry
-            defaultValue={formInput.password}
+            value={formInput.password}
             placeholder="Enter password"
             onChangeText={handleOnChange("password")}
             placeholderTextColor={isDarkMode ? "white" : "black"}
@@ -113,7 +113,7 @@ export default function CreateUser() {
             ]}
             inputMode="text"
             secureTextEntry
-            defaultValue={formInput.password_confirmation}
+            value={formInput.password_confirmation}
             placeholder="Enter password confirmation"
             onChangeText={handleOnChange("password_confirmation")}
             placeholderTextColor={isDarkMode ? "white" : "black"}

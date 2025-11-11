@@ -1,14 +1,14 @@
 import { ThemedView } from "@/components/themed-view";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { deleteUser, getAllUsers } from "@/services/user-service";
+import { deleteUser } from "@/services/user-service";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
-  Button,
   FlatList,
   RefreshControl,
   StyleSheet,
+  TextInput,
   ToastAndroid,
   TouchableOpacity,
 } from "react-native";
@@ -16,8 +16,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import EditUser from "../(modals)/users/edit-user";
 import useFetch from "@/hooks/use-fetch";
 import ListLoader from "@/components/list-loader";
-import useHandle from "@/hooks/useHandle";
+import useHandle from "@/hooks/use-handle";
 import { ThemedText } from "@/components/themed-text";
+import PrivateRoute from "@/components/auth/private-route";
 
 interface Users {
   id: number;
@@ -28,7 +29,13 @@ interface Users {
 export default function TabTwoScreen() {
   const [selectedUser, setSelectedUser] = useState<Users | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { data: users, loading, reload } = useFetch(getAllUsers);
+  const {
+    data: users,
+    loading,
+    reload,
+    handleSearchTerm,
+    searchTerm,
+  } = useFetch(`/users`);
   const { execute } = useHandle(deleteUser);
 
   const handleAddUser = () => {
@@ -67,55 +74,74 @@ export default function TabTwoScreen() {
       reload();
     }
   };
-
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedView style={styles.flex}>
-          <ThemedText style={styles.titleText}>
-            Users {users?.length}
-          </ThemedText>
-          <Button title="Add User" onPress={handleAddUser} />
-        </ThemedView>
-        {loading ? (
-          <ListLoader listNumber={6} />
-        ) : (
-          <FlatList
-            style={styles.flatList}
-            data={users}
-            renderItem={({ item, index }) => (
-              <ThemedView key={index} style={styles.itemContainer}>
-                <ThemedView style={styles.detailsContainer}>
-                  <ThemedText style={styles.item}>{item.name}</ThemedText>
-                  <ThemedText style={styles.item2}>{item.email}</ThemedText>
+    <PrivateRoute>
+      <SafeAreaView style={styles.safeArea}>
+        <ThemedView style={styles.titleContainer}>
+          <ThemedView style={styles.flex}>
+            <ThemedText style={styles.titleText}>
+              {users?.length > 0 ? `Users ${users?.length}` : "No users"}
+            </ThemedText>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search..."
+              placeholderTextColor="#fff"
+              returnKeyType="search"
+              onChangeText={handleSearchTerm}
+            />
+          </ThemedView>
+          {loading ? (
+            <ListLoader listNumber={6} />
+          ) : (
+            <FlatList
+              style={styles.flatList}
+              data={users}
+              renderItem={({ item, index }) => (
+                <ThemedView key={index} style={styles.itemContainer}>
+                  <ThemedView style={styles.detailsContainer}>
+                    <ThemedText style={styles.item}>{item.name}</ThemedText>
+                    <ThemedText style={styles.item2}>{item.email}</ThemedText>
+                  </ThemedView>
+                  <ThemedView style={styles.icons}>
+                    <TouchableOpacity onPress={handleConfirmDelete(item.id)}>
+                      <IconSymbol name="trash.fill" size={24} color="#ef4444" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleOpenModal(item)}>
+                      <IconSymbol
+                        name="pencil.circle.fill"
+                        size={24}
+                        color="#3b82f6"
+                      />
+                    </TouchableOpacity>
+                  </ThemedView>
                 </ThemedView>
-                <ThemedView style={styles.icons}>
-                  <TouchableOpacity onPress={handleConfirmDelete(item.id)}>
-                    <IconSymbol name="trash.fill" size={24} color="#ef4444" />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={handleOpenModal(item)}>
-                    <IconSymbol
-                      name="pencil.circle.fill"
-                      size={24}
-                      color="#3b82f6"
-                    />
-                  </TouchableOpacity>
-                </ThemedView>
-              </ThemedView>
-            )}
-            refreshControl={
-              <RefreshControl refreshing={loading} onRefresh={reload} />
-            }
+              )}
+              refreshControl={
+                <RefreshControl refreshing={loading} onRefresh={reload} />
+              }
+              ListEmptyComponent={
+                <ThemedText style={styles.emptyList}>
+                  {searchTerm
+                    ? `No results for "${searchTerm}"`
+                    : "No users found"}
+                </ThemedText>
+              }
+            />
+          )}
+          <EditUser
+            user={selectedUser}
+            isOpen={isOpen}
+            onClose={handleCloseModal}
+            reload={reload}
           />
+        </ThemedView>
+        {!loading && (
+          <TouchableOpacity style={styles.fab} onPress={handleAddUser}>
+            <ThemedText style={styles.fabText}>+</ThemedText>
+          </TouchableOpacity>
         )}
-        <EditUser
-          user={selectedUser}
-          isOpen={isOpen}
-          onClose={handleCloseModal}
-          reload={reload}
-        />
-      </ThemedView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </PrivateRoute>
   );
 }
 
@@ -179,5 +205,41 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     maxWidth: "80%",
+  },
+  fab: {
+    position: "absolute",
+    bottom: 30,
+    right: 30,
+    backgroundColor: "#2196F3",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  fabText: {
+    color: "#fff",
+    fontSize: 30,
+    lineHeight: 34,
+  },
+  searchInput: {
+    height: 50,
+    borderWidth: 1,
+    padding: 10,
+    marginTop: 10,
+    borderRadius: 10,
+    color: "#fff",
+    borderColor: "#fff",
+    width: "50%",
+  },
+  emptyList: {
+    fontSize: 18,
+    marginTop: 20,
+    textAlign: "center",
   },
 });

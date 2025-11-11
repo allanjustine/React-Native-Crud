@@ -9,9 +9,21 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../context/auth-context";
 
 export default function HomeScreen() {
   const isDarkMode = useColorScheme() === "dark";
+  const { user, logout } = useAuth();
+
+  async function handleAuthAction() {
+    if (user) {
+      logout();
+      return;
+    }
+
+    router.push("/login");
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ThemedView style={styles.container}>
@@ -25,7 +37,7 @@ export default function HomeScreen() {
               type="title"
               style={{ color: isDarkMode ? "#fff" : "#222" }}
             >
-              Welcome!
+              Welcome! {user?.name?.split(" ")[0]}
             </ThemedText>
             <HelloWave />
           </ThemedView>
@@ -35,11 +47,6 @@ export default function HomeScreen() {
             {[
               { label: "Create User", link: "/create-user", color: "#4F8EF7" },
               { label: "View Users", link: "/users", color: "#34D399" },
-              {
-                label: "Update User",
-                link: "/users/edit-user",
-                color: "#FBBF24",
-              },
             ].map((action: any) => (
               <TouchableOpacity
                 key={action.label}
@@ -51,6 +58,17 @@ export default function HomeScreen() {
                 </ThemedText>
               </TouchableOpacity>
             ))}
+            <TouchableOpacity
+              style={[
+                styles.actionButton,
+                { backgroundColor: user ? "#F87171" : "#3B82F6" },
+              ]}
+              onPress={handleAuthAction}
+            >
+              <ThemedText type="subtitle" style={styles.actionText}>
+                {user ? "Logout" : "Login"}
+              </ThemedText>
+            </TouchableOpacity>
           </ThemedView>
         </ScrollView>
       </ThemedView>

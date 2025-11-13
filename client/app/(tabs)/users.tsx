@@ -18,7 +18,6 @@ import useFetch from "@/hooks/use-fetch";
 import ListLoader from "@/components/list-loader";
 import useHandle from "@/hooks/use-handle";
 import { ThemedText } from "@/components/themed-text";
-import PrivateRoute from "@/components/auth/private-route";
 
 interface Users {
   id: number;
@@ -75,73 +74,71 @@ export default function TabTwoScreen() {
     }
   };
   return (
-    <PrivateRoute>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedView style={styles.flex}>
-            <ThemedText style={styles.titleText}>
-              {users?.length > 0 ? `Users ${users?.length}` : "No users"}
-            </ThemedText>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search..."
-              placeholderTextColor="#fff"
-              returnKeyType="search"
-              onChangeText={handleSearchTerm}
-            />
-          </ThemedView>
-          {loading ? (
-            <ListLoader listNumber={6} />
-          ) : (
-            <FlatList
-              style={styles.flatList}
-              data={users}
-              renderItem={({ item, index }) => (
-                <ThemedView key={index} style={styles.itemContainer}>
-                  <ThemedView style={styles.detailsContainer}>
-                    <ThemedText style={styles.item}>{item.name}</ThemedText>
-                    <ThemedText style={styles.item2}>{item.email}</ThemedText>
-                  </ThemedView>
-                  <ThemedView style={styles.icons}>
-                    <TouchableOpacity onPress={handleConfirmDelete(item.id)}>
-                      <IconSymbol name="trash.fill" size={24} color="#ef4444" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleOpenModal(item)}>
-                      <IconSymbol
-                        name="pencil.circle.fill"
-                        size={24}
-                        color="#3b82f6"
-                      />
-                    </TouchableOpacity>
-                  </ThemedView>
-                </ThemedView>
-              )}
-              refreshControl={
-                <RefreshControl refreshing={loading} onRefresh={reload} />
-              }
-              ListEmptyComponent={
-                <ThemedText style={styles.emptyList}>
-                  {searchTerm
-                    ? `No results for "${searchTerm}"`
-                    : "No users found"}
-                </ThemedText>
-              }
-            />
-          )}
-          <EditUser
-            user={selectedUser}
-            isOpen={isOpen}
-            onClose={handleCloseModal}
-            reload={reload}
+    <SafeAreaView style={styles.safeArea}>
+      <ThemedView style={styles.titleContainer}>
+        <ThemedView style={styles.flex}>
+          <ThemedText style={styles.titleText}>
+            {users?.length > 0 ? `Users ${users?.length}` : "No users"}
+          </ThemedText>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search..."
+            placeholderTextColor="#fff"
+            returnKeyType="search"
+            onChangeText={handleSearchTerm}
           />
         </ThemedView>
-        {!loading && (
-          <TouchableOpacity style={styles.fab} onPress={handleAddUser}>
-            <ThemedText style={styles.fabText}>+</ThemedText>
-          </TouchableOpacity>
+        {loading ? (
+          <ListLoader listNumber={6} />
+        ) : (
+          <FlatList
+            style={styles.flatList}
+            data={users}
+            renderItem={({ item, index }) => (
+              <ThemedView key={index} style={styles.itemContainer}>
+                <ThemedView style={styles.detailsContainer}>
+                  <ThemedText style={styles.item}>{item.name}</ThemedText>
+                  <ThemedText style={styles.item2}>{item.email}</ThemedText>
+                </ThemedView>
+                <ThemedView style={styles.icons}>
+                  <TouchableOpacity onPress={handleConfirmDelete(item.id)}>
+                    <IconSymbol name="trash.fill" size={24} color="#ef4444" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleOpenModal(item)}>
+                    <IconSymbol
+                      name="pencil.circle.fill"
+                      size={24}
+                      color="#3b82f6"
+                    />
+                  </TouchableOpacity>
+                </ThemedView>
+              </ThemedView>
+            )}
+            refreshControl={
+              <RefreshControl refreshing={loading} onRefresh={reload} />
+            }
+            ListEmptyComponent={
+              <ThemedText style={styles.emptyList}>
+                {searchTerm
+                  ? `No results for "${searchTerm}"`
+                  : "No users found"}
+              </ThemedText>
+            }
+          />
         )}
-      </SafeAreaView>
-    </PrivateRoute>
+        <EditUser
+          user={selectedUser}
+          isOpen={isOpen}
+          onClose={handleCloseModal}
+          reload={reload}
+        />
+      </ThemedView>
+      {!loading && (
+        <TouchableOpacity style={styles.fab} onPress={handleAddUser}>
+          <ThemedText style={styles.fabText}>+</ThemedText>
+        </TouchableOpacity>
+      )}
+    </SafeAreaView>
   );
 }
 

@@ -18,6 +18,10 @@ export default function RootLayout() {
           name="login"
           options={{ presentation: "containedModal", title: "Login" }}
         />
+        <Stack.Screen
+          name="signup"
+          options={{ presentation: "modal", title: "Signup" }}
+        />
       </Stack>
     </ThemeProvider>
   );

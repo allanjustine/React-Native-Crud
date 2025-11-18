@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/native";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { AuthProvider } from "./context/auth-context";
+import { AuthProvider } from "@/context/auth-context";
 import { BaseLayout } from "@/components/layout/base-layout";
 
 export const unstable_settings = {

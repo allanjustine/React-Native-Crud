@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   ToastAndroid,
 } from "react-native";
-import { useAuth } from "../context/auth-context";
+import { useAuth } from "@/context/auth-context";
 import useHandle from "@/hooks/use-handle";
 import FormInput from "@/components/ui/form-input";
 import { ThemedView } from "@/components/themed-view";
@@ -69,7 +69,7 @@ export default function Login() {
 
         <View style={styles.footer}>
           <ThemedText>Don`t have an account? </ThemedText>
-          <TouchableOpacity onPress={() => router.push("/create-user")}>
+          <TouchableOpacity onPress={() => router.push("/signup")}>
             <ThemedText style={styles.link}>Sign Up</ThemedText>
           </TouchableOpacity>
         </View>

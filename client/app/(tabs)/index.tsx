@@ -9,7 +9,7 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../context/auth-context";
+import { useAuth } from "@/context/auth-context";
 
 export default function HomeScreen() {
   const isDarkMode = useColorScheme() === "dark";

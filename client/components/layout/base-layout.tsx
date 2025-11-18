@@ -1,4 +1,4 @@
-import { useAuth } from "@/app/context/auth-context";
+import { useAuth } from "@/context/auth-context";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
